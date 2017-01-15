@@ -1,0 +1,100 @@
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+       <script src="https://d3js.org/d3.v3.min.js"></script>
+       <script src="script.js"></script>
+</head>
+    <style>
+        p{
+            border:3px solid red;
+            height:40px;
+            width:120px;
+            line-height:40px;
+            text-align:center;
+        }
+        #svg1{
+            background-color: oldlace;
+        }
+    </style>
+<body>
+   
+    <p id='hello'></p>
+    <input type="button" onclick='launch();' value='click'>
+    <br><hr><br>
+    <svg width="300" height="200" id='svg1'></svg>
+    <br><hr><br>
+    <svg width="400" height="280" id='svg2'></svg>
+    <br><hr><br>
+     <script>
+        function rand(x,y){
+            return Math.floor(Math.random()*(2017-1911)+1911)
+            
+        };
+        function launch(){
+            var num=rand(1911,2017);
+            console.log(num);
+            d3.select("p").text(num)
+        }
+        d3.select("#svg1")
+          .append("circle")
+          .attr({
+            cx : 150,
+            cy : 120,
+            r  : 15
+        });
+        d3.select("#svg1")
+          .append("rect")
+          .attr({
+            x : 160,
+            y : 45,
+            width  : 5,
+            height : 78
+        });
+        d3.select("#svg1")
+          .append("text")
+          .attr({
+            x : 135,
+            y : 200,
+            "font-size" : 40,
+            "font-family" : "arial"
+        }).text("A");
+
+        for(i=0;i<5;i++){
+            d3.select("#svg1")
+              .append("line")
+              .attr({
+                x1 : 0,
+                y1 : 45+i*30,
+                x2 : 300,
+                y2 : 45+i*30,
+                stroke : 'black',
+                "stroke-width": '2'
+            });
+        }
+        for(i=0;i<20;i++){
+            var tmp = Math.floor(Math.random()*281+20);
+            d3.select("#svg2")
+              .append("line")
+              .attr({
+                x1 : 0,
+                y1 : 10+i*14,
+                x2 : 20+tmp,
+                y2 : 10+i*14,
+                stroke : 'red',
+                "stroke-width": '10'
+            });
+            d3.select("#svg2")
+              .append("text")
+              .attr({
+                x : 35+tmp,
+                y : 14+i*14,
+                "font-size" : 12,
+                "font-family" : "arial"
+            }).text(tmp);
+        }
+    </script>
+</body>
+</html>
