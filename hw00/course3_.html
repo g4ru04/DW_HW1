@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <style></style>
+</head>
+<body>
+    <input type='button' value='click' onclick='update();'>
+<script>
+    var arr = [85,60,99,49,77,82];
+    var w=900;
+    var h=200;
+    var padding=20;
+    
+    svg();
+    bind(arr);
+    bind_t(arr);
+    render();
+    render_t();
+    function svg(){
+        d3.select("body3").append("svg").attr({
+            width:w,
+            height:h
+        });
+    }
+    
+    function bind(dataset){
+        //1----------------------------------
+        selection =d3.select("svg")
+        .selectAll("rect")
+        .data(dataset);
+//        selection.text(function(d){
+//            return d;
+//        });
+
+        //2----------------------------------
+        selection.enter()
+        .append("rect");
+//        .text(function(d){
+//           return d; 
+//        });
+        //3----------------------------------
+        selection.exit().remove();
+    }
+    function bind_t(dataset){
+        //1----------------------------------
+        selection =d3.select("svg")
+        .selectAll("text")
+        .data(dataset);
+        //2----------------------------------
+        selection.enter()
+        .append("text");
+        //3----------------------------------
+        selection.exit().remove();
+    }
+    function render(){
+       d3.selectAll("rect").attr({
+           x: function(d,i){
+               return padding+42*i;
+           },
+           y: function(d,i){
+               return h-padding-d;
+           },
+           width: 40,
+           height: function(d,i){
+               return d;
+           },fill: function(d){
+               if(d>70){
+                   return "lightgreen";
+               }else{
+                   return "red";
+               }
+           }
+           
+       });
+    }
+    function render_t(){
+        d3.selectAll("text").attr({
+           x: function(d,i){
+               return padding+42*i+8;
+           },
+           y: function(d,i){
+               return h-padding+20;
+           },
+           "font-size": 20
+       }).text(function(d){return d;});
+    }
+    function update(){
+        var num = random(40,100);
+        arr.push(num);
+        console.log(arr);
+        bind(arr);
+        bind_t(arr);
+        render();
+        render_t();
+    }
+    
+    function random(M,N){
+        return Math.ceil(Math.random()*(M-N)+N)
+    }
+    
+
+</script>
+
+</body>
+</html>

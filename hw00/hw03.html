@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>d3-start</title>
+    <script src="https://d3js.org/d3.v3.js"></script>
+    <style>
+        div{
+            font-size: 7px;
+        }
+    </style>
+</head>
+<body>
+  <svg width="400" height="160" id='svg1'>
+      
+  </svg>
+   <hr>
+    <body2></body2>
+   <hr>
+    <body3></body3>
+    <br>
+    <input type='button'value='click' onclick="update()">
+   <script>
+       d3.json("invoice-taipei.json", function(dataSet){
+           var svg = d3.select("#svg1");
+           var count = 0;
+           for(var i=0; i<dataSet.length; i++){
+                if(+dataSet[i].amount>10*10000*10000
+               && dataSet[i].date.indexOf("2016/8/1")!=-1
+               && dataSet[i].city==="臺北市"){
+                      d3.select("#svg1")
+                        .append("rect")
+                        .attr({
+                        x: 200,
+                        y: 10+12*count,
+                        width: (+dataSet[i].amount/100000000),
+                        height: 10,
+                        fill: "red"
+                      });
+                      d3.select("#svg1")
+                        .append("text")
+                        .attr({
+                        x: 0,
+                        y: 16+12*count,
+                        "font-size": 5
+                      }).text(dataSet[i].industry);
+                      count=count+1;
+                 }
+                
+            }
+       });
+        var arr = [85,60,99,49,77,82]
+//    for(var i=0; i<arr.length; i++){
+//        d3.select("body")
+//            .append("div")
+//            .datum(arr[i])
+//            .text("ok");
+//    }
+//    console.log(d3.selectAll("div"));
+    bind(arr);
+    render();
+    function bind(dataset){
+        //1----------------------------------
+        selection =d3.select("body2")
+        .selectAll("div")
+        .data(dataset);
+//        selection.text(function(d){
+//            return d;
+//        });
+
+        //2----------------------------------
+        selection.enter()
+        .append("div").attr({});
+//        .text(function(d){
+//           return d; 
+//        });
+        //3----------------------------------
+        selection.exit().remove();
+    }
+    function render(){
+        d3.select("body2").selectAll("div").text(function(d,i){
+            return i+":"+d;
+        }).style({
+            color: function(d){
+                if(d<70){
+                    return "red";
+                }else{
+                    return "black";
+                }
+            }
+        });
+    }
+    
+       
+    var arr2 = [85,60,99,49,77,82];
+    var w2=900;
+    var h2=120;
+    var padding2=20;
+    
+    svg();
+    bind2(arr2);
+    bind_t(arr2);
+    render2();
+    render_t();
+    function svg(){
+        d3.select("body3").append("svg").attr({
+            "id" : "svg3",
+            width:w2,
+            height:h2
+        });
+    }
+    
+    function bind2(dataset){
+        //1----------------------------------
+        selection =d3.select("#svg3")
+        .selectAll("rect")
+        .data(dataset);
+//        selection.text(function(d){
+//            return d;
+//        });
+
+        //2----------------------------------
+        selection.enter()
+        .append("rect");
+//        .text(function(d){
+//           return d; 
+//        });
+        //3----------------------------------
+        selection.exit().remove();
+    }
+    function bind_t(dataset){
+        //1----------------------------------
+        selection =d3.select("#svg3")
+        .selectAll("text")
+        .data(dataset);
+        //2----------------------------------
+        selection.enter()
+        .append("text");
+        //3----------------------------------
+        selection.exit().remove();
+    }
+    function render2(){
+       d3.select("#svg3").selectAll("rect").attr({
+           x: function(d,i){
+               return padding2+42*i;
+           },
+           y: function(d,i){
+               return h2-padding2-d;
+           },
+           width: 40,
+           height: function(d,i){
+               return d;
+           },fill: function(d){
+               if(d>70){
+                   return "lightgreen";
+               }else{
+                   return "red";
+               }
+           }
+           
+       });
+    }
+    function render_t(){
+        d3.select("#svg3").selectAll("text").attr({
+           x: function(d,i){
+               return padding2+42*i+8;
+           },
+           y: function(d,i){
+               return h2-padding2+20;
+           },
+           "font-size": 20
+       }).text(function(d){return d;});
+    }
+    function update(){
+        var num = random(40,100);
+        arr2.push(num);
+        console.log(arr2);
+        bind2(arr2);
+        bind_t(arr2);
+        render2();
+        render_t();
+    }
+    
+    function random(M,N){
+        return Math.ceil(Math.random()*(M-N)+N)
+    }   
+       
+       
+       
+       
+       
+       
+   </script>
+</body>
+</html>
