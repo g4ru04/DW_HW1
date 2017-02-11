@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <style></style>
+</head>
+<body>
+   <script>
+    var xScale = d3.scale.linear()
+        .domain([10, 20])
+        .range([0, 255]);
+        //.clamp(true);
+       
+    function random(n, m){
+        var rScale = d3.scale.linear()
+        .domain([0, 1])
+        .rangeRound([n, m]);
+        return rScale(Math.random());
+    }
+    console.log(random(1,200));   
+    console.log(d3.range(1,9));
+       
+])
+.range([0, 100]);
+    </script>
+    
+</body>
+</html>
