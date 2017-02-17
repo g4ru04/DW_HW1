@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+    <script src="https://d3js.org/d3.v3.js"></script>
+    <style>
+        body{
+            background: #eee;
+        }
+        .axis path, .axis line{
+            fill: none;
+            stroke: black;
+            shape-rendering: auto;
+        }
+        .axis text{
+            font-size: 12px;
+        }
+        #tooltip{
+            position: absolute;
+            background: #eee;
+            width: 150px;
+            height: auto;
+            padding: 0px 10px;
+            border-radius: 10px;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+        }
+        #tooltip.hidden{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="tooltip" class="hidden">
+        <p><strong id="city">Hello</strong></p>
+        <p id="cancerType">tooltip</p>
+        <p id="cancerNumber">tooltip</p>
+    </div>
+    <script>
+        var w = 900;
+        var h = 600;
+        var padding = 90;
+        var letterList =  ["台閩地區","台北市","台中市","台南市","高雄市","基隆市","新竹市","嘉義市","新北市","桃園市","新竹縣","宜蘭縣","苗栗縣","彰化縣","南投縣","雲林縣","嘉義縣","屏東縣","澎湖縣","花蓮縣","台東縣","連江縣","金門縣"
+        ];
+        
+        svg();       
+    
+        d3.csv("cancer_data.csv", function(dataSet){         
+           bind(dataSet);
+           render(dataSet);
+           btnList(dataSet);
+        });
+        
+        
+        function svg(){
+            d3.select("body").append("svg").attr({
+                width: w,
+                height: h
+            });
+            d3.select("svg").append("g").append("rect").attr({
+                width: "100%",
+                height: "100%",
+                fill: "white"
+            });
+            d3.select("svg").append("g").attr("id","axisX");
+            d3.select("svg").append("g").attr("id","axisY");
+            d3.select("svg")
+          .append("text")
+          .attr({
+            x : 360,
+            y : 50,
+            "font-size" : 40,
+            "font-family" : "arial"
+        }).text("癌症圖表");
+        }
+        
+        function bind(dataSet){
+            var selection = d3.select("svg")
+                                .selectAll("circle")
+                                .data(dataSet);
+            selection.enter().append("circle");
+            selection.exit().remove();
+        }
+        function render(dataSet){
+          //比例尺們 xScale, yScale, rScale, fScale
+           var xScale = d3.time.scale()
+                    .domain([new Date(d3.min(dataSet, function(d){
+                        return new Date(d.year);
+                    })),new Date(d3.max(dataSet, function(d){
+                        return new Date(d.year);
+                    }))])
+                    .range([padding,w-padding]);
+           var yScale = d3.scale.linear()
+                    .domain([0,d3.max(dataSet, function(d){
+                        return +d.avgAge;
+                    })])
+                    .range([h-padding,padding]);
+           var rScale = d3.scale.linear()
+                    .domain([d3.min(dataSet, function(d){
+                        return +d.number;
+                    }),d3.max(dataSet, function(d){
+                        return +d.number;
+                    })])
+                    .range([5,20]);
+           var fScale = d3.scale.category20();
+            
+           //開始畫圈圈
+           d3.selectAll("circle")
+              .attr({
+                cx: function(d){
+                  return xScale(new Date(d.year)); 
+                },
+                cy:function(d){
+                  return yScale(+d.avgAge); 
+                },
+                r:function(d){
+                  return rScale(+d.number); 
+                },
+                fill: function(d){
+                  return fScale(letterList.indexOf(d.city));
+                }
+              })
+//               .append("title").text(function(d){
+//               return d.city+"\r\n"+d.industry+"\r\n發票金額:"+d.amount;
+//                })
+               .on("mouseover",function(d){
+               cX=d3.select(this).attr("cx");
+               console.log(cX);
+               cY=d3.select(this).attr("cy");
+               console.log(cY);
+               var tooltip = d3.select("#tooltip")
+                .style({
+                    left: (+cX+20)+"px",
+                    top: (+cY+20)+"px"
+                });
+                //替換tooltip內容(選擇其id後,修改內容)
+                d3.select("#tooltip").select("#city").text(d.city);
+                d3.select("#tooltip").select("#industry").text(d.cancerType);
+               tooltip.select("#cancerNumber").text("案例數 : " + d.number);
+                d3.select("#tooltip").classed("hidden",false);
+           }).on("mouseout",function(d){
+                d3.select("#tooltip").classed("hidden",true);
+           });
+            
+           //開始畫x,y軸線 
+            var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+            var yAxis = d3.svg.axis().scale(yScale).orient("left");
+            d3.select("svg")
+                .select("g#axisY")
+                .attr("class","axis")
+                .attr("transform", "translate("+(padding-10)+",0)")
+                .call(yAxis);
+            d3.select("svg")
+                .select("g#axisX")
+                .attr("class","axis")
+                .attr("transform", "translate(0,"+(h-padding+10)+")")
+                .call(xAxis);
+            
+            
+        }
+        function btnList(dataSet){
+            
+            //industryArr: 行業別陣列(包含重複項目)           
+            var industryArr = dataSet.map(function(d){
+               return d.cancerType;
+            });  
+            //uniqueIndustryArr: 行業別陣列(無重複項目) 
+            var uniqueIndustryArr = unique(industryArr);
+            
+            //filterIndustryArr: 行業別陣列(去除空白項目) 
+            var filterIndustryArr = uniqueIndustryArr.filter(function(d){
+               return d!=""; 
+            });
+            d3.select("body").append("br");
+            //畫出按鈕們
+//            var selection = d3.select("body")
+//                .append("div")
+//                .selectAll("input")
+//                .data(filterIndustryArr);
+            
+//            selection.enter()
+//                .append("input")
+//                .attr({
+//                    type:"button",
+//                    value:function(d){
+//                        return d;
+//                    }
+//                })
+//                .on("click",function(d){
+//                    //當行業別按鈕按下時執行
+//                    //console.log(d);
+//                    update(d);
+//                });
+            var selection = d3.select("body")
+                .append("select")
+                .selectAll("option")
+                .data(filterIndustryArr);
+            selection.enter()
+                .append("option")
+                .property({
+                    value:function(d){
+                        return d;
+                    }
+                })
+                .text(function(d){
+                    return d;
+                    //當行業別按鈕按下時執行
+                    //console.log(d);
+                    //update(d);
+                });
+            d3.select("select").on("change",function(){
+                var value = d3.select("select").property("value");
+                update(value);
+            });
+            
+            function update(industryName){
+                //過濾行業別符合者
+                //console.log(industryName+"?");
+                var newDataSet = dataSet.filter(function(d){
+                    return industryName == d.cancerType;
+                });
+                //console.log(industryName);
+                bind(newDataSet);
+                render(newDataSet);
+                //console.table(newDataSet);
+                //重新整理bind,render
+                //???
+            }
+            function unique(array){
+              var n = []; 
+              for(var i = 0; i < array.length; i++){
+                if (n.indexOf(array[i]) == -1){
+                    n.push(array[i]);
+                }
+              }
+              return n;
+            }
+        }
+    </script>
+
+</body>
+</html>
