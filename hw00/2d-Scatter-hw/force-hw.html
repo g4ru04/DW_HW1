@@ -17,21 +17,21 @@
         var padding = 90;
         
         svg();       
-    
-        d3.csv("invoice.csv", row, function(dataSet){
-            
-           bind(dataSet);
-          //render();
-           
-        });
-        function row(d){
-            
-            d.amount = +d.amount;
-            d.number = +d.number;
-                
-            return d;
-        }
-        
+        bind();
+//        d3.csv("invoice.csv", row, function(dataSet){
+//            
+//           bind(dataSet);
+//          //render();
+//           
+//        });
+//        function row(d){
+//            
+//            d.amount = +d.amount;
+//            d.number = +d.number;
+//                
+//            return d;
+//        }
+//        
         function svg(){
             d3.select("body").append("svg").attr({
                 width: w,
@@ -46,31 +46,108 @@
         }
         
         function bind(dataSet){
-            //TODO-依日期分類產生新陣列
-            var nested_dataSet = [];
-                               
-            //console.log(nested_dataSet);
-            
+            var nodes = [];
+            for(var i=0;i<100;i++){
+                if(i==0){
+                    nodes.push({
+                        id : i ,
+                        r : Math.random()*10+80
+                    });
+                }else{
+                    nodes.push({
+                        id : i ,
+                        r : Math.random()*10+2
+                    });
+                }
+            }
+            var links=[]
+;
+            for(var i=0;i<99;i+=2){
+                links.push({
+                    source : i ,
+                    target : i+1
+                });
+            }
+            for(var i=0;i<98;i+=2){
+                links.push({
+                    source : i ,
+                    target : i+2
+                });
+            }//            //TODO-依日期分類產生新陣列
+//            var nested_dataSet = d3.nest().key(function(d){
+//                return d.date;
+//            }).entries(dataSet);
+//                               
+//            //console.log(nested_dataSet);
+//           
             var force = d3.layout.force()
                         .size([w,h])
                         //TODO-調整彼此引力參數
-                        .nodes(nested_dataSet)  
+                        //步社也有預設
+                        .charge(function(d){
+                           // return -d.values.length*3;
+                            return -d.r*60;
+                        })
+                        .friction(0.9)
+                        .gravity(0.9)
+//                        .nodes(nested_dataSet)  
+                        .nodes(nodes)
+                        .links(links)
                         .on("tick", render)
                         .start();
             
             
             var selection = d3.select("svg")
                                 .selectAll("circle")
-                                .data(nested_dataSet);
+                                .data(nodes);
             selection.enter().append("circle").call(force.drag);
+            selection.exit().remove();
+            var selection = d3.select("svg")
+                                .selectAll("line")
+                                .data(links);
+            selection.enter().append("line").call(force.drag);
             selection.exit().remove();
         }
         function render(){
-        
+         var fScale = d3.scale.category20c();
             //TODO-把每個circle畫出來
-            
+           // console.log(d3.select("circle"));
             d3.selectAll("circle")
-               .attr({});
+               .attr({
+                cx : function(d){
+                    return d.x;
+                },
+                cy: function(d){
+                    return d.y;
+                },
+                r: function(d){
+                    return d.r;
+//                    return d.values.length/40;
+                },
+                fill: function(d){
+                    return fScale(d.r);
+                }
+            });
+            //console.log(d3.select("line"));
+             d3.selectAll("line")
+               .attr({
+                x1 : function(d){
+                    return d.source.x;
+                },
+                 y1 : function(d){
+                    return d.source.y;
+                },
+                 x2 : function(d){
+                    return d.target.x;
+                },
+                 y2 : function(d){
+                    return d.target.y;
+                },
+                stroke: function(d){
+                    return "#555";//fScale(d.r);
+                },
+                 "stroke-width" : 3
+            });
             
         }
         

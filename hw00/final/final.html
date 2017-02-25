@@ -60,7 +60,7 @@
     <svg width="600" height="250" style='float:right;margin-right:calc(10vw);'></svg>
     
     <table class='tmp_table' style='margin:20px;border:2px solid #F00;'>
-        <tr><td>請輸入還可以忍耐的時間:</td><td><input type='text' id='mv_time' value='10' style='width:60px;height:30px;margin:10px 20px;'>分鐘</td></tr>
+        <tr><td>請輸入還可以忍耐的時間:</td><td><input type='text' id='mv_time' value='15' style='width:60px;height:30px;margin:10px 20px;'>分鐘</td></tr>
         <tr><td>請輸入還可以忍耐的移動速度:</td><td><input type='text' id='mv_rate' value='70' style='width:60px;height:30px;margin:10px 20px;'>公尺/秒</td></tr>
         <tr><td><button style='width:100px;height:32px;margin:10px 40px;' onclick='see_result($("#mv_time").val(),$("#mv_rate").val());'>走吧孩子</button></td>
         <td><button style='width:100px;height:32px;margin:10px 40px;' onclick='draw_toilet()'>畫出廁所</button></td>
@@ -307,8 +307,8 @@
             m_lat = position.coords.latitude.toFixed(6);
             m_lng = position.coords.longitude.toFixed(6);
             
-            m_lat=25.042023;
-            m_lng=121.545898;
+            //m_lat=25.042023;
+            //m_lng=121.545898;
         }
         function getDistance(mlat, mlng,t_lat,t_lng, unit) {  
              var R = 6378.137; //地球半徑  
