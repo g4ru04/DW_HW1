@@ -83,7 +83,7 @@
         }
         function bind(topoData){
             // 2.地理投影器: 設定投影方式(麥卡托)、定位點([經,緯度])、縮放(scale)
-            var projection = d3.geo.mercator().center([0,0]).scale(200);    
+            var projection = d3.geo.mercator().center([0,0]).scale(400);    
             
             // 3.路徑產生器: d3.geo.path()
             var path = d3.geo.path().projection(projection);
