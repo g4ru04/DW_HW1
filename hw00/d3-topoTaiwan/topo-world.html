@@ -28,7 +28,7 @@
         <p><strong id="city">Hello</strong></p>
         <p id="industry">tooltip</p>
     </div>
-    <svg width="1000" height="600"></svg>
+    <svg width="1200" height="600"></svg>
     <script>
         //1.地理資料檔: topoTaiwan.json
         d3.json("world-110m.json", function(topoData) {
@@ -83,7 +83,7 @@
         }
         function bind(topoData){
             // 2.地理投影器: 設定投影方式(麥卡托)、定位點([經,緯度])、縮放(scale)
-            var projection = d3.geo.mercator().center([0,0]).scale(400);    
+            var projection = d3.geo.mercator().center([0,0]).scale(500);    
             
             // 3.路徑產生器: d3.geo.path()
             var path = d3.geo.path().projection(projection);
